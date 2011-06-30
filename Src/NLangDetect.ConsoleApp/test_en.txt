@@ -1,0 +1,233 @@
+﻿Coding Horror: Performance Is A Feature
+
+We've always put a heavy emphasis on performance at Stack Overflow and Stack Exchange. Not just because we're performance wonks (guilty!), but because we think speed is a competitive advantage. There's plenty of experimental data proving that the slower your website loads and displays, the less people will use it.
+
+[Google found that] the page with 10 results took 0.4 seconds to generate. The page with 30 results took 0.9 seconds. Half a second delay caused a 20% drop in traffic. Half a second delay killed user satisfaction.
+In A/B tests, [Amazon] tried delaying the page in increments of 100 milliseconds and found that even very small delays would result in substantial and costly drops in revenue.
+
+I believe the converse of this is also true. That is, the faster your website is, the more people will use it. This follows logically if you think like an information omnivore: the faster you can load the page, the faster you can tell whether that page contains what you want. Therefore, you should always favor fast websites. The opportunity cost for switching on the public internet is effectively nil, and whatever it is that you're looking for, there are multiple websites that offer a similar experience. So how do you distinguish yourself? You start by being, above all else, fast.
+
+Do you, too, feel the need – the need for speed? If so, I have three pieces of advice that I'd like to share with you.
+
+1. Follow the Yahoo Guidelines. Religiously.
+
+The golden reference standard for building a fast website remains Yahoo's 13 Simple Rules for Speeding Up Your Web Site from 2007. There is one caveat, however:
+
+There's some good advice here, but there's also a lot of advice that only makes sense if you run a website that gets millions of unique users per day. Do you run a website like that? If so, what are you doing reading this instead of flying your private jet to a Bermuda vacation with your trophy wife?
+So … a funny thing happened to me since I wrote that four years ago. I now run a network of public, community driven Q&A web sites that do get millions of daily unique users. (I'm still waiting on the jet and trophy wife.) It does depend a little on the size of your site, but if you run a public website, you really should pore over Yahoo's checklist and take every line of it to heart. Or use the tools that do this for you:
+
+We've long since implemented most of the 13 items on Yahoo's list, except for one. But it's a big one: Using a Content Delivery Network.
+
+The user's proximity to your web server has an impact on response times. Deploying your content across multiple, geographically dispersed servers will make your pages load faster from the user's perspective. But where should you start?
+As a first step to implementing geographically dispersed content, don't attempt to redesign your web application to work in a distributed architecture. Depending on the application, changing the architecture could include daunting tasks such as synchronizing session state and replicating database transactions across server locations. Attempts to reduce the distance between users and your content could be delayed by, or never pass, this application architecture step.
+
+Remember that 80-90% of the end-user response time is spent downloading all the components in the page: images, stylesheets, scripts, Flash, etc. This is the Performance Golden Rule. Rather than starting with the difficult task of redesigning your application architecture, it's better to first disperse your static content. This not only achieves a bigger reduction in response times, but it's easier thanks to content delivery networks.
+
+As a final optimization step, we just rolled out a CDN for all our static content. The results are promising; the baseline here is our datacenter in NYC, so the below should be read as "how much faster did our website get for users in this area of the world?"
+
+
+
+In the interests of technical accuracy, static content isn't the complete performance picture; you still have to talk to our servers in NYC to get the dynamic content which is the meat of the page. But 90% of our visitors are anonymous, only 36% of our traffic is from the USA, and Yahoo's research shows that 40 to 60 percent of daily vistors come in with an empty browser cache. Optimizing this cold cache performance worldwide is a huge win.
+
+Now, I would not recommend going directly for a CDN. I'd leave that until later, as there are a bunch of performance tweaks on Yahoo's list which are free and trivial to implement. But using a CDN has gotten a heck of a lot less expensive and much simpler since 2007, with lots more competition in the space from companies like Amazon's, NetDNA, and CacheFly. So when the time comes, and you've worked through the Yahoo list as religiously as I recommend, you'll be ready.
+
+2. Love (and Optimize for) Your Anonymous and Registered Users
+
+Our Q&A sites are all about making the internet better. That's why all the contributed content is licensed back to the community under Creative Commons and always visible regardless of whether you are logged in or not. I despise walled gardens. In fact, you don't actually have to log in at all to participate in Q&A with us. Not even a little!
+
+The primary source of our traffic is anonymous users arriving from search engines and elsewhere. It's classic "write once, read – and hopefully edit – millions of times." But we are also making the site richer and more dynamic for our avid community members, who definitely are logged in. We add features all the time, which means we're serving up more JavaScript and HTML. There's an unavoidable tension here between the download footprint for users who are on the site every day, and users who may visit once a month or once a year.
+
+Both classes are important, but have fundamentally different needs. Anonymous users are voracious consumers optimizing for rapid browsing, while our avid community members are the source of all the great content that drives the network. These guys (and gals) need each other, and they both deserve special treatment. We design and optimize for two classes of users: anonymous, and logged in. Consider the following Google Chrome network panel trace on a random Super User question I picked:
+
+ 	requests	data transferred	DOMContentLoaded	onload
+Logged in (as me)	29	233.31 KB	1.17 s	1.31 s
+Anonymous	22	111.40 KB	768 ms	1.28 s
+We minimize the footprint of HTML, CSS and Javascript for anonymous users so they get their pages even faster. We load a stub of very basic functionality and dynamically "rez in" things like editing when the user focuses the answer input area. For logged in users, the footprint is necessarily larger, but we can also add features for our most avid community members at will without fear of harming the experience of the vast, silent majority of anonymous users.
+
+3. Make Performance a Point of (Public) Pride
+
+Now that we've exhausted the Yahoo performance guidance, and made sure we're serving the absolute minimum necessary to our anonymous users – where else can we go for performance? Back to our code, of course.
+
+When it comes to website performance, there is no getting around one fundamental law of the universe: you can never serve a webpage faster than it you can render it on the server. I know, duh. But I'm telling you, it's very easy to fall into the trap of not noticing a few hundred milliseconds here and there over the course of a year or so of development, and then one day you turn around and your pages are taking almost a full freaking second to render on the server. It's a heck of a liability to start 1 full second in the hole before you've even transmitted your first byte over the wire!
+
+That's why, as a developer, you need to put performance right in front of your face on every single page, all the time. That's exactly what we did with our MVC Mini Profiler, which we are contributing back to the world as open source. The simple act of putting a render time in the upper right hand corner of every page we serve forced us to fix all our performance regressions and omissions.
+
+
+
+(Note that you can click on the SQL linked above to see what's actually being run and how long it took in each step. And you can use the share link to share the profiler data for this run with your fellow developers to shame them diagnose a particular problem. And it works for multiple AJAX requests. Have I mentioned that our open source MVC Mini Profiler is totally freaking awesome? If you're on a .NET stack, you should really check it out. )
+
+In fact, with the render time appearing on every page for everyone on the dev team, performance became a point of pride. We had so many places where we had just gotten a little sloppy or missed some tiny thing that slowed a page down inordinately. Most of the performance fixes were trivial, and even the ones that were not turned into fantastic opportunities to rearchitect and make things simpler and faster for all of our users.
+
+Did it work? You bet your sweet ILAsm it worked:
+
+
+
+That's the Google crawler page download time; the experimental Google Site Performance page, which ostensibly reflects complete full-page browser load time, confirms the improvements:
+
+
+
+While server page render time is only part of the performance story, it is the baseline from which you start. I cannot emphasize enough how much the simple act of putting the page render time on the page helped us, as a development team, build a dramatically faster site. Our site was always relatively fast, but even for a historically "fast" site like ours, we realized huge gains in performance from this one simple change.
+
+I won't lie to you. Performance isn't easy. It's been a long, hard road getting to where we are now – and we've thrown a lot of unicorn dollars toward really nice hardware to run everything on, though I wouldn't call any of our hardware choices particularly extravagant. And I did follow my own advice, for the record.
+
+I distinctly remember switching from AltaVista to Google back in 2000 in no small part because it was blazing fast. To me, performance is a feature, and I simply like using fast websites more than slow websites, so naturally I'm going to build a site that I would want to use. But I think there's also a lesson to be learned here about the competitive landscape of the public internet, where there are two kinds of websites: the quick and the dead.
+
+Which one will you be?
+
+Posted by Jeff Atwood    View blog reactions
+It'd be nice if Amazon Cloudfront was a little faster. But it's certainly not bad. The real win is the price for the little guy. There's no monthly fee since pricing is purely based on usage. And for the little images I'm hosting through their service, it's costing me about $0.10/month.
+
+As a corollary, I switched to Google Chrome because it runs so much faster than any other browser that I've used. Speed matters!
+
+Using a CDN is incredibly easy - much more so than some of the other tips.
+
+NetDNA have a very cheap and easy to use solution for smaller sites called MaxCDN. It's around $40 for a year or 1000GB whichever happens first (various discounts around).
+
+This allows two types of CDN to be setup:
+
+pull (i.e. you just give your site a new name (e.g. images-origin.damieng.com) and make MaxCDN the old name (images.damieng.com) and tell it what you named your origin and it does all the magic.
+
+push - this basically acts as an FTP/SFTP server you upload files to directly. It's best used for larger downloads where the time it would take the CDN to get it from your site would be a negative impact.
+
+[)amien
+
+Very interesting post by the way. Looks like you guys made some truly remarkable improvements.
+
+I've always been obsessed with performance since my OpenGL programming days. And so naturally I've spent a lot of time optimizing my sites as well. Your advice is spot on.
+
+Oh, and I actually downloaded the MVC mini profiler the other day, and I'm planning on using it next week. I'm looking forward to it.
+
+Minor nitpick: opportunity cost doesn't mean what you think it means. Opportunity cost is the value of the forgone alternative, so if you say that opportunity cost for switching websites on the internet is zero, that implies that the value of websites is zero.
+
+http://en.wikipedia.org/wiki/Opportunity_cost
+
+Wow Jeff - I really am not setting out to troll, but seriously... does your wife read the blog? I am not sure the exact, technical, stackoverflow.com accepted factual definition of "Trophy Wife" - but seriously, publicly stating that you are still waiting for that (and a jet)... not cool dude. OK - maybe waiting for the Jet is cool.
+
+My prediction: Jeff has to pay up, hire a babysitter and spend a relaxing vacation in Bermuda with his now publicly recognized "Better than a Trophy Wife" before the year has ended. Just please hold back on the pasty programmer pictures. Think of the children.
+
+Pitty fogbugz doesnt learn from this. Using in australia it is just too slow.
+
+If so, what are you doing reading this instead of flying your private jet to a Bermuda vacation with your trophy wife?
+Performance is a feature. Making assumptions about the sex of your readers is just a bug.
+
+Does it make any difference if the site loads 100ms slower? Can a normal human being notice that difference?
+
+Jeff, let me tell you that I'm once again surprised about the fact that pretty much everything you put on your blog inspires me and raises my thirst for improving myself and the work I'm doing. Thank you very much.
+
+@Meenakshi: Absolutely any normal human can notice a 100ms lag. Would you watch a television that displayed only ten frames per second?
+
+Jeff, despite your love for speedy web sites, I don't like it that my web site's PageSpeed score being hampered by the fact that I'm using StackOverflow's flair. The flair, being an image, was not compressed enough and its expiration duration too short (1 day. PageSpeed suggested 1 week).
+
+@Meenakshi YESSSSSSSSSSSSSSSS IT DOES OMG.
+
+You browse the internet for both work and school, and site average being about 1/2 second slower then they need to be because of crappy programming, and negligence.
+
+How many sites do you go to a day? 20, 50, 100? lets take the 50 number.
+
+50 X .5 = 25 seconds. A day.
+
+25 x 7 = 175 a week.
+
+175/60 = ~ 3 minutes give or take.
+
+3 * 12 = 36 minutes a year.
+
+Again, is it the end of the world? No. But why should the web be a bloated piece of crap when local applications are almost instant?
+
+Jeff is right, the web can be much better. If you have a decently fast computer, and chrome, you can SEE when the server side is horribly unoptimized and bloated. Its obvious, and users do appreciate it. Why, because the problem is MAGNIFIED if the user machine is NOT fast. If they are on a work terminal with a single core p4 and a gig of ram, in winxp, and your site doesnt even load on my 3 ghz dual core with 4 gb ram, what do you think is gonna happen if they have client side rendering lag? It **ADDITIVE**. Web developers need to understand how important this is. Its beyond just niche power user stuff here, its a HUGE market share of people without the latest and greatest hardware, that think your site sucks.
+
+Fix it.
+
+The MVC Mini Profiler looks awesome. Too bad I'm using WebForms. :/
+
+Hi Jeff , I see point on speedy loading of any page because the more it take time the more user will get frustrate and go away from site but how about if you have blog , do you need to care for speed ? I think its make more sense for business sites but if you know in general there is something which can measure blog speed and can reduce it without too much technology stuff involved then please write about that, by the way I am going to try page speed for sure, let's see how it works.
+
+Thanks
+10 example of UNIX find command 
+
+Looking at that MVC-Mini-Profiler. It seems like it is designed for you to have Database logic living in your web application. I have all of my database logic in a separate service running on other machine... Does the Mini-Profiler handle that scenario? If not, I'm a little shocked to learn that some of the large scale web applications that use it don't have their database logic running in a separate service.
+
+Also... WTF is with me getting stuck with my google openid for a name? Where do I change that?! LOL.
+
+also... @DThink
+
+I think you're missing the point here. Does it make a difference to the USER that the site is 100ms slower? Hell NO. It doesn't... at all. You could lose the same amount of time by not drinking your coffee and reacting slower to the page coming up. It's negligible FOR THE USER...
+
+The REAL point is this: 100ms of time means it was probably processing ~100ms longer. Using CPU, memory and other resources during that time. Processor time is finite on a machine (or even multiple machines)... So the longer a page takes to process, the fewer requests you can handle over a specified time period.
+
+I am with Mark here. I use Fogbugz and Kiln both are ridiculously slow. Jeff, tell Joel to fix his slow software.
+
+Are you guys really running SO/SE on Asp.net MVC? Since your mini-profiler is written for Asp.net MVC I have to assume so. That just blows my mind as most asp websites / web applications I've used are terrible.
+
+Can you please let me know why you chose to use Asp.net? I've been somewhat anti-Microsoft in my software choices for a while (desktop support for ~6 years will do that) and I'm curious to what features it offers that make it worth it. For the record I use PHP.
+
+Thanks!
+
+There is this new CDN for free called cloudflare.com
+You should give it a try.
+
+Brandon,
+
+ASP.NET at its core is very good. It performs well and the tooling is excellent when you use Visual Studio. So with some practice you can be very productive with it, and crank out quality stuff.
+
+ASP.NET Web Forms has had issues over the years though, essentially promoting a lot of bad practices on the web. The whole viewstate/postback methodology bled into many built-in controls. And that in turn led to usability problems with form submissions, and many websites have suffered. I know, because I built Web Forms for 8 years.
+
+ASP.NET MVC, however, promotes a completely different way of thinking that is more web friendly in general... friendly URLs, no more viewstate/postback mess, and so on.
+
+I wrote an article comparing the two in greater detail awhile back...
+http://swortham.blogspot.com/2009/10/when-to-use-aspnet-web-forms-and-when.html
+
+Jeff,
+
+What does the "check redirects" section of the code do? While it's only 50 ms, it looks like the 2nd slowest thing in the list. Is that by chance the MVC routing engine at work? And are you by chance using regular expressions in your routing? I just wonder if there's room for improvement there.
+
+Steve
+
+Usability is another feature as important as Performance. An interface displayed at a speed-of-light is useless if you do not understand how to interact with it. Thank god bot features are implemented in Stack Overflow. Good job guys, keep going.
+
+Jeff,
+
+A remarkable post! It's hard to find ppl who stick with trying to improve the performance on their websites.
+
+I've never heard about MVC mini-profiler (that's because i'm for Java than .NET) and i was really curious about it.
+
+It's not a too intrusive profiler? I mean, it's quite commom for those kind of application to consume too much of the process that itself can possible cause a bottleneck.
+
+It's really necessary to change the source of the specified pages to check their performance? It's not possible to just add it on the framework as a listener or something like that?
+
+Keep pushing! 
+[]s
+
+@www.google.com/accounts/o8/id?id=AItOawn9emGrf3fSSNT7Br5k7STGP_tPLpRKIpo
+
+(lol why is that your ID)
+
+No, I was adding to the point, that 100 ms for a homepage, becomes a lot more as you go deeper and the database queries get more complex. It can and DOES in real world applications bring this lag up to as much as 500-750ms, and then when you push that over the wire, its then additive to client side rendering lag.
+
+So you have people staring a white god damn screen for over a full second. Users do notice, and you are wrong. Not everyone has a machine that can run 3 vms of Crysis simultaneously, especially in office environments. That's great if you can save money on the backend too, good on you but the USER EXPERIENCE and how even small lags cause people to use alternatives that don't suck is the crux of Jeff's post, and I very much agree. Statistics show that people are not as stupid as you think. Google didn't become #1 because of their cute holiday banners, its because they were leaner and faster then the rest.
+
+TL:DR Optimization has many positives, we both feel strongly about different "ends" of those positives, so to speak.
+
+FYI, www.webpagetest.org allows you to select a location you want to test from. There are 28 locations to choose from worldwide. So you can get an idea of how your site is performing in different parts of the world.
+
+Completely agree. Site "snappiness" is very important. When I was in my parents (like 4 or 5 years ago) they refused to get DSL, and I just had a 56kb modem (yes, dialup). Aside from the "yahoo guidelines", most sites were full of crap: Flash, huge js files with only a few functions used, enormous images, cropped via HTML. Now I have DSL and don't even realise it, but a lot of websites are just clogging bandwidth (either by size or by requests). Good performance on the server side is just the icing on the cake. You've done a good job at StackOverflow, I could even browse it a few months ago when I only had an unreliable wifi connection at 2kb/s.
+
+Cheers,
+
+Ruben @mostlymaths.net
+
+Jeff,
+
+You inspired me to do a little testing of my own. I've been moving stuff over to Amazon CloudFront since I made a big website release yesterday. And one thing that's been troubling me is their lack of native gzip support. That, and the fact that they're still a little slow in some parts of the world motivated me to look around.
+
+I found a good alternative that's also very cheap -- RackSpace Cloud Files. They use the Akamai network. I documented my findings, including my performance tests here...
+
+http://blog.bucketsoft.com/2011/06/amazon-cloudfront-vs-rackspace-cloud.html
+
+As somebody who got the pagespeed rank to go from 60 to 96 (currently 90 due to some vendor who is having issues) I can share with you guys some of the highlights.
+Our home page. https://www.atmcash.com was not using CDN, did not have GZIPs, sprites, or any sort of JS optimization.
+We started using Lazy-loaders, CDN, very importantly! outsource our DNS, many people do not think that DNS may have a huge impact, but it does!. Use sprites, they are gold!
+Make sure you combine as much css and JS as possible. Specially on your landing pages.
+If you have any specific questions on how to optimize your webpage, feel free to message me. @EGBlue
+
+The one other thing that is useful about performance analysis is that it oftens highlights errors or bad coding that would otherwise have been missed.
