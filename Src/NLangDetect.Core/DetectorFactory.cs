@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace NLangDetect.Core
   public class DetectorFactory
   {
     public Dictionary<string, double[]> WordLangProbMap;
-    public List<string> Langlist;
+    public List<LanguageName> Langlist;
 
     private static readonly DetectorFactory _instance = new DetectorFactory();
 
@@ -17,7 +18,7 @@ namespace NLangDetect.Core
     private DetectorFactory()
     {
       WordLangProbMap = new Dictionary<string, double[]>();
-      Langlist = new List<string>();
+      Langlist = new List<LanguageName>();
     }
 
     #endregion
@@ -48,7 +49,7 @@ namespace NLangDetect.Core
 
         using (var sr = new StreamReader(file))
         {
-          langProfile = (LangProfile)jsonSerializer.Deserialize(sr, typeof (LangProfile));
+          langProfile = (LangProfile)jsonSerializer.Deserialize(sr, typeof(LangProfile));
         }
 
         AddProfile(langProfile, index, langsize);
@@ -81,7 +82,7 @@ namespace NLangDetect.Core
 
     internal static void AddProfile(LangProfile profile, int index, int langsize)
     {
-      string lang = profile.name;
+      var lang = (LanguageName)Enum.Parse(typeof(LanguageName), profile.name, true);
 
       if (_instance.Langlist.Contains(lang))
       {

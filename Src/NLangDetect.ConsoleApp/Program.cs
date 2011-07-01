@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -231,7 +232,7 @@ namespace NLangDetect.ConsoleApp
         return;
       }
 
-      var result = new Dictionary<string, List<string>>();
+      var result = new Dictionary<string, List<LanguageName?>>();
 
       foreach (string filename in _argList)
       {
@@ -251,11 +252,11 @@ namespace NLangDetect.ConsoleApp
 
               detector.Append(text);
 
-              string lang = detector.Detect();
+              LanguageName? lang = detector.Detect();
 
               if (!result.ContainsKey(correctLang))
               {
-                result.Add(correctLang, new List<string>());
+                result.Add(correctLang, new List<LanguageName?>());
               }
 
               result[correctLang].Add(lang);
@@ -281,25 +282,31 @@ namespace NLangDetect.ConsoleApp
 
         foreach (string lang in langlist)
         {
-          var resultCount = new Dictionary<string, int>();
+          var resultCount = new Dictionary<LanguageName, int>();
           int count = 0;
-          List<string> list = result[lang];
+          List<LanguageName?> list = result[lang];
 
-          foreach (string detectedLang in list)
+          foreach (LanguageName? detectedLang in list)
           {
             count++;
 
-            if (resultCount.ContainsKey(detectedLang))
+            if (!detectedLang.HasValue)
             {
-              resultCount[detectedLang] = resultCount[detectedLang] + 1;
+              continue;
+            }
+
+            if (resultCount.ContainsKey(detectedLang.Value))
+            {
+              resultCount[detectedLang.Value] = resultCount[detectedLang.Value] + 1;
             }
             else
             {
-              resultCount.Add(detectedLang, 1);
+              resultCount.Add(detectedLang.Value, 1);
             }
           }
 
-          int correct = resultCount.ContainsKey(lang) ? resultCount[lang] : 0;
+          var langName = (LanguageName)Enum.Parse(typeof(LanguageName), lang, true);
+          int correct = resultCount.ContainsKey(langName) ? resultCount[langName] : 0;
           double rate = correct / (double)count;
 
           // TODO IMM HI: format

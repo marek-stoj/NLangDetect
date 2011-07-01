@@ -18,13 +18,12 @@ namespace NLangDetect.Core
     private const double _ProbThreshold = 0.1;
     private const double _ConvThreshold = 0.99999;
     private const int _BaseFreq = 10000;
-    private const string _UnknownLang = "unknown";
 
     private static readonly Regex _UrlRegex = new Regex("https?://[-_.?&~;+=/#0-9A-Za-z]+", RegexOptions.Compiled);
     private static readonly Regex _MailRegex = new Regex("[-_.0-9A-Za-z]+@[-_0-9A-Za-z]+[-_.0-9A-Za-z]+", RegexOptions.Compiled);
 
     private readonly Dictionary<string, double[]> _wordLangProbMap;
-    private readonly List<string> _langlist;
+    private readonly List<LanguageName> _langlist;
 
     private StringBuilder _text;
     private double[] _langprob;
@@ -60,7 +59,7 @@ namespace NLangDetect.Core
       _alpha = alpha;
     }
 
-    public void SetPriorMap(Dictionary<string, double> priorMap)
+    public void SetPriorMap(Dictionary<LanguageName, double> priorMap)
     {
       _priorMap = new double[_langlist.Count];
 
@@ -68,7 +67,7 @@ namespace NLangDetect.Core
 
       for (int i = 0; i < _priorMap.Length; i++)
       {
-        string lang = _langlist[i];
+        LanguageName lang = _langlist[i];
 
         if (priorMap.ContainsKey(lang))
         {
@@ -169,16 +168,14 @@ namespace NLangDetect.Core
       }
     }
 
-    public string Detect()
+    public LanguageName? Detect()
     {
       List<Language> probabilities = GetProbabilities();
 
-      if (probabilities.Count > 0)
-      {
-        return probabilities[0].Name;
-      }
-
-      return _UnknownLang;
+      return
+        probabilities.Count > 0
+          ? (LanguageName?)probabilities[0].Name
+          : null;
     }
 
     public List<Language> GetProbabilities()

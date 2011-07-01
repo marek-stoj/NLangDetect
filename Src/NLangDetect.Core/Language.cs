@@ -7,7 +7,7 @@ namespace NLangDetect.Core
   {
     #region Constructor(s)
 
-    public Language(string name, double probability)
+    public Language(LanguageName name, double probability)
     {
       Name = name;
       Probability = probability;
@@ -36,7 +36,7 @@ namespace NLangDetect.Core
 
     #region Properties
 
-    public string Name { get; set; }
+    public LanguageName Name { get; set; }
 
     public double Probability { get; set; }
 
