@@ -43,7 +43,7 @@ namespace NLangDetect.Core.Tests.UtilsTests
 
       profile.add("a"); // ignore
 
-      Assert.AreEqual(null, profile.freq["a"]); // ignored
+      Assert.IsFalse(profile.freq.ContainsKey("a")); // ignored
     }
 
     [Test]
@@ -56,8 +56,8 @@ namespace NLangDetect.Core.Tests.UtilsTests
       profile.add("abcd");  // as well
 
       Assert.AreEqual(1, profile.freq["a"]);
-      Assert.AreEqual(null, profile.freq[""]);     // ignored
-      Assert.AreEqual(null, profile.freq["abcd"]); // ignored
+      Assert.IsFalse(profile.freq.ContainsKey(""));     // ignored
+      Assert.IsFalse(profile.freq.ContainsKey("abcd")); // ignored
     }
 
     [Test]
@@ -79,9 +79,9 @@ namespace NLangDetect.Core.Tests.UtilsTests
       Assert.AreEqual(1, profile.freq["\u3050"]);
 
       profile.omitLessFreq();
-      Assert.AreEqual(null, profile.freq["a"]); // omitted
+      Assert.IsFalse(profile.freq.ContainsKey("a")); // omitted
       Assert.AreEqual(5, profile.freq["\u3042"]);
-      Assert.AreEqual(null, profile.freq["\u3050"]); // omitted
+      Assert.IsFalse(profile.freq.ContainsKey("\u3050")); // omitted
     }
 
     [Test]

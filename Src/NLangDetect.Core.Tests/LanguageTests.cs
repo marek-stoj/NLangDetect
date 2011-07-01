@@ -17,7 +17,7 @@ namespace NLangDetect.Core.Tests
 
       Assert.AreEqual("en", language2.Name);
       Assert.AreEqual(1.0, language2.Probability, 0.0001);
-      Assert.AreEqual("en:1.00", language2.ToString());
+      Assert.AreEqual("en:1.000000", language2.ToString());
     }
   }
 }

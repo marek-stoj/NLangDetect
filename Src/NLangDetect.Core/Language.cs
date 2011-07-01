@@ -21,7 +21,7 @@ namespace NLangDetect.Core
       return
         string.Format(
           CultureInfo.InvariantCulture.NumberFormat,
-          "{0}:{1:F6}",
+          "{0}:{1:0.000000}",
           Name,
           Probability);
     }

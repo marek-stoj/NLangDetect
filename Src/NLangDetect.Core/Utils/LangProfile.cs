@@ -9,7 +9,7 @@ namespace NLangDetect.Core.Utils
     private const int LESS_FREQ_RATIO = 100000;
 
     public string name;
-    
+
     public Dictionary<string, int> freq = new Dictionary<string, int>();
     public int[] n_words = new int[NGram.N_GRAM];
 
@@ -46,7 +46,7 @@ namespace NLangDetect.Core.Utils
       int threshold = n_words[0] / LESS_FREQ_RATIO;
       if (threshold < MINIMUM_FREQ) threshold = MINIMUM_FREQ;
 
-      Dictionary<string, int>.KeyCollection keys = freq.Keys;
+      ICollection<string> keys = freq.Keys;
       int roman = 0;
       // TODO IMM HI: move up?
       Regex regex1 = new Regex("^[A-Za-z]$", RegexOptions.Compiled);
@@ -80,16 +80,18 @@ namespace NLangDetect.Core.Utils
 
       if (roman < n_words[0] / 3)
       {
-        Dictionary<string, int>.KeyCollection keys2 = freq.Keys;
+        ICollection<string> keys2 = freq.Keys;
         
         // TODO IMM HI: move up?
         Regex regex2 = new Regex(".*[A-Za-z].*", RegexOptions.Compiled);
         
         foreach (string key in keys2)
         {
+          int count = freq[key];
+
           if (regex2.IsMatch(key))
           {
-            n_words[key.Length - 1] -= freq[key];
+            n_words[key.Length - 1] -= count;
             keysToRemove.Add(key);
           }
         }
