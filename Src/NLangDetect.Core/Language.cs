@@ -5,11 +5,17 @@ namespace NLangDetect.Core
   // TODO IMM HI: name??
   public class Language
   {
+    #region Constructor(s)
+
     public Language(string name, double probability)
     {
       Name = name;
       Probability = probability;
     }
+
+    #endregion
+
+    #region Object overrides
 
     public override string ToString()
     {
@@ -26,8 +32,14 @@ namespace NLangDetect.Core
           Probability);
     }
 
+    #endregion
+
+    #region Properties
+
     public string Name { get; set; }
 
     public double Probability { get; set; }
+
+    #endregion
   }
 }

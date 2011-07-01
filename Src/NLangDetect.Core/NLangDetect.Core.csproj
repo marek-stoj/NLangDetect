@@ -50,7 +50,7 @@
     <Compile Include="Extensions\UnicodeBlock.cs" />
     <Compile Include="GenProfile.cs" />
     <Compile Include="InternalException.cs" />
-    <Compile Include="LangDetectException.cs" />
+    <Compile Include="NLangDetectException.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

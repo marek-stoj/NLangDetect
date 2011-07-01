@@ -7,8 +7,10 @@ using System.IO;
 namespace NLangDetect.Core
 {
   // TODO IMM HI: xml reader not tested
-  public class GenProfile
+  public static class GenProfile
   {
+    #region Public methods
+
     public static LangProfile load(string lang, string file)
     {
       LangProfile profile = new LangProfile(lang);
@@ -19,7 +21,9 @@ namespace NLangDetect.Core
       {
         inputStream = File.OpenRead(file);
 
-        if (Path.GetExtension(file).ToUpper() == ".GZ")
+        string extension = Path.GetExtension(file) ?? "";
+
+        if (extension.ToUpper() == ".GZ")
         {
           inputStream = new GZipStream(inputStream, CompressionMode.Decompress);
         }
@@ -31,18 +35,15 @@ namespace NLangDetect.Core
             switch (xmlReader.NodeType)
             {
               case XmlNodeType.Element:
-                tagextractor.setTag(xmlReader.Name);
+                tagextractor.SetTag(xmlReader.Name);
                 break;
 
               case XmlNodeType.Text:
-                tagextractor.add(xmlReader.Value);
+                tagextractor.Add(xmlReader.Value);
                 break;
 
               case XmlNodeType.EndElement:
-                tagextractor.closeTag(profile);
-                break;
-
-              default:
+                tagextractor.CloseTag(profile);
                 break;
             }
           }
@@ -56,9 +57,11 @@ namespace NLangDetect.Core
         }
       }
 
-      Console.WriteLine(lang + ": " + tagextractor.count());
+      Console.WriteLine(lang + ": " + tagextractor.Count);
 
       return profile;
     }
+
+    #endregion
   }
 }

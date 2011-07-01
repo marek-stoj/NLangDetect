@@ -5,65 +5,72 @@ namespace NLangDetect.Core.Utils
   public class TagExtractor
   {
     // TODO IMM HI: do the really need to be internal?
-    internal string target_;
-    internal int threshold_;
-    internal StringBuilder buf_;
-    internal string tag_;
+    internal string Target;
+    internal int Threshold;
+    internal StringBuilder StringBuilder;
+    internal string Tag;
 
-    private int count_;
+    #region Constructor(s)
 
     public TagExtractor(string tag, int threshold)
     {
-      target_ = tag;
-      threshold_ = threshold;
-      count_ = 0;
-      clear();
+      Target = tag;
+      Threshold = threshold;
+      Count = 0;
+      Clear();
     }
 
-    public int count()
+    #endregion
+
+    #region Public methods
+
+    public void Clear()
     {
-      return count_;
+      StringBuilder = new StringBuilder();
+      Tag = null;
     }
 
-    public void clear()
+    public void SetTag(string tag)
     {
-      buf_ = new StringBuilder();
-      tag_ = null;
+      Tag = tag;
     }
 
-    public void setTag(string tag)
+    public void Add(string line)
     {
-      tag_ = tag;
-    }
-
-    public void add(string line)
-    {
-      if (tag_ == target_ && line != null)
+      if (Tag == Target && line != null)
       {
-        buf_.Append(line);
+        StringBuilder.Append(line);
       }
     }
 
-    public void closeTag(LangProfile profile)
+    public void CloseTag(LangProfile profile)
     {
-      if (profile != null && tag_ == target_ && buf_.Length > threshold_)
+      if (profile != null && Tag == Target && StringBuilder.Length > Threshold)
       {
         var gram = new NGram();
 
-        for (int i = 0; i < buf_.Length; ++i)
+        for (int i = 0; i < StringBuilder.Length; i++)
         {
-          gram.addChar(buf_[i]);
+          gram.AddChar(StringBuilder[i]);
 
-          for (int n = 1; n <= NGram.N_GRAM; ++n)
+          for (int n = 1; n <= NGram.GramsCount; n++)
           {
-            profile.add(gram.get(n));
+            profile.Add(gram.Get(n));
           }
         }
 
-        ++count_;
+        Count++;
       }
 
-      clear();
+      Clear();
     }
+
+    #endregion
+
+    #region Properties
+
+    public int Count { get; private set; }
+
+    #endregion
   }
 }

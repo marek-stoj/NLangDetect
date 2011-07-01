@@ -11,12 +11,13 @@ namespace NLangDetect.ConsoleApp
 {
   internal class Program
   {
-    private const double DEFAULT_ALPHA = 0.5;
+    private const double DefaultAlpha = 0.5;
 
-    private readonly Dictionary<string, string> opt_with_value = new Dictionary<string, string>();
-    private readonly Dictionary<string, string> values = new Dictionary<string, string>();
-    private readonly HashSet<string> opt_without_value = new HashSet<string>();
-    private readonly List<string> arglist = new List<string>();
+    private readonly Dictionary<string, string> _optWithValue = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> _values = new Dictionary<string, string>();
+    private readonly HashSet<string> _optWithoutValue = new HashSet<string>();
+    private readonly List<string> _argList = new List<string>();
+    private readonly JsonSerializer _jsonSerializer = new JsonSerializer();
 
     #region Application entry point
 
@@ -24,22 +25,22 @@ namespace NLangDetect.ConsoleApp
     {
       var program = new Program();
 
-      program.addOpt("-d", "directory", "./");
-      program.addOpt("-a", "alpha", "" + DEFAULT_ALPHA);
-      program.addOpt("-s", "seed", null);
-      program.parse(args);
+      program.AddOpt("-d", "directory", "./");
+      program.AddOpt("-a", "alpha", "" + DefaultAlpha);
+      program.AddOpt("-s", "seed", null);
+      program.Parse(args);
 
-      if (program.hasOpt("--genprofile"))
+      if (program.HasOpt("--genprofile"))
       {
-        program.generateProfile();
+        program.GenerateProfile();
       }
-      else if (program.hasOpt("--detectlang"))
+      else if (program.HasOpt("--detectlang"))
       {
-        program.detectLang();
+        program.DetectLang();
       }
-      else if (program.hasOpt("--batchtest"))
+      else if (program.HasOpt("--batchtest"))
       {
-        program.batchTest();
+        program.BatchTest();
       }
     }
 
@@ -47,44 +48,44 @@ namespace NLangDetect.ConsoleApp
 
     #region Private helper methods
 
-    private static string searchFile(string directory, string pattern)
+    private static string SearchFile(string directory, string pattern)
     {
       return Directory.GetFiles(directory, pattern).FirstOrDefault();
     }
 
-    private void parse(string[] args)
+    private void Parse(string[] args)
     {
-      for (int i = 0; i < args.Length; ++i)
+      for (int i = 0; i < args.Length; i++)
       {
-        if (opt_with_value.ContainsKey(args[i]))
+        if (_optWithValue.ContainsKey(args[i]))
         {
-          string key = opt_with_value[args[i]];
+          string key = _optWithValue[args[i]];
 
-          values[key] = args[i + 1];
-          ++i;
+          _values[key] = args[i + 1];
+          i++;
         }
         else if (args[i].StartsWith("-"))
         {
-          opt_without_value.Add(args[i]);
+          _optWithoutValue.Add(args[i]);
         }
         else
         {
-          arglist.Add(args[i]);
+          _argList.Add(args[i]);
         }
       }
     }
 
-    private void addOpt(string opt, string key, string value)
+    private void AddOpt(string opt, string key, string value)
     {
-      opt_with_value.Add(opt, key);
-      values.Add(key, value);
+      _optWithValue.Add(opt, key);
+      _values.Add(key, value);
     }
 
-    private string get(string key)
+    private string Get(string key)
     {
       string value;
 
-      if (!values.TryGetValue(key, out value))
+      if (!_values.TryGetValue(key, out value))
       {
         return null;
       }
@@ -92,11 +93,11 @@ namespace NLangDetect.ConsoleApp
       return value;
     }
 
-    private int? getInt(string key)
+    private int? GetInt(string key)
     {
       string value;
 
-      if (!values.TryGetValue(key, out value))
+      if (!_values.TryGetValue(key, out value))
       {
         return null;
       }
@@ -106,41 +107,41 @@ namespace NLangDetect.ConsoleApp
       return int.TryParse(value, out intValue) ? intValue : (int?)null;
     }
 
-    private double getDouble(string key, double defaultValue)
+    private double GetDouble(string key, double defaultValue)
     {
-      if (!values.ContainsKey(key))
+      if (!_values.ContainsKey(key))
       {
         return defaultValue;
       }
 
       double doubleValue;
 
-      return double.TryParse(values[key], out doubleValue) ? doubleValue : defaultValue;
+      return double.TryParse(_values[key], out doubleValue) ? doubleValue : defaultValue;
     }
 
-    private bool hasOpt(string opt)
+    private bool HasOpt(string opt)
     {
-      return opt_without_value.Contains(opt);
+      return _optWithoutValue.Contains(opt);
     }
 
-    private bool loadProfile()
+    private bool LoadProfile()
     {
-      string profileDirectory = get("directory") + "/";
+      string profileDirectory = Get("directory") + "/";
 
       try
       {
-        DetectorFactory.loadProfile(profileDirectory);
+        DetectorFactory.LoadProfile(profileDirectory);
 
-        int? seed = getInt("seed");
+        int? seed = GetInt("seed");
 
         if (seed.HasValue)
         {
-          DetectorFactory.setSeed(seed.Value);
+          DetectorFactory.SetSeed(seed.Value);
         }
 
         return false;
       }
-      catch (LangDetectException e)
+      catch (NLangDetectException e)
       {
         Console.Error.WriteLine("ERROR: " + e.Message);
 
@@ -148,13 +149,13 @@ namespace NLangDetect.ConsoleApp
       }
     }
 
-    public void generateProfile()
+    private void GenerateProfile()
     {
-      string directory = get("directory");
+      string directory = Get("directory");
 
-      foreach (string lang in arglist)
+      foreach (string lang in _argList)
       {
-        string file = searchFile(directory, lang + "wiki-.*-abstract\\.xml.*");
+        string file = SearchFile(directory, lang + "wiki-.*-abstract\\.xml.*");
 
         if (file == null)
         {
@@ -162,23 +163,20 @@ namespace NLangDetect.ConsoleApp
           continue;
         }
 
-        // TODO IMM HI: as a static field?
-        var jsonSerializer = new JsonSerializer();
-
         try
         {
           LangProfile profile = GenProfile.load(lang, file);
 
-          profile.omitLessFreq();
+          profile.OmitLessFreq();
 
           string profile_path = directory + "/profiles/" + lang;
 
           using (var sw = new StreamWriter(profile_path))
           {
-            jsonSerializer.Serialize(sw, profile);
+            _jsonSerializer.Serialize(sw, profile);
           }
         }
-        catch (LangDetectException e)
+        catch (NLangDetectException e)
         {
           // TODO IMM HI: what about this?
           throw;
@@ -186,39 +184,39 @@ namespace NLangDetect.ConsoleApp
       }
     }
 
-    public void detectLang()
+    private void DetectLang()
     {
-      if (loadProfile())
+      if (LoadProfile())
       {
         return;
       }
 
-      foreach (string filename in arglist)
+      foreach (string filename in _argList)
       {
         try
         {
-          Detector detector = DetectorFactory.create(getDouble("alpha", DEFAULT_ALPHA));
+          Detector detector = DetectorFactory.Create(GetDouble("alpha", DefaultAlpha));
 
-          if (hasOpt("--debug"))
+          if (HasOpt("--debug"))
           {
-            detector.setVerbose();
+            detector.SetVerbose();
           }
 
           using (var sr = new StreamReader(filename))
           {
-            detector.append(sr);
+            detector.Append(sr);
           }
 
           Console.Write(filename + ": ");
 
-          foreach (Language language in detector.getProbabilities())
+          foreach (Language language in detector.GetProbabilities())
           {
             Console.Write(language);
           }
 
           Console.WriteLine();
         }
-        catch (LangDetectException e)
+        catch (NLangDetectException e)
         {
           // TODO IMM HI: what about this?
           throw;
@@ -226,16 +224,16 @@ namespace NLangDetect.ConsoleApp
       }
     }
 
-    public void batchTest()
+    private void BatchTest()
     {
-      if (loadProfile())
+      if (LoadProfile())
       {
         return;
       }
 
       var result = new Dictionary<string, List<string>>();
 
-      foreach (string filename in arglist)
+      foreach (string filename in _argList)
       {
         try
         {
@@ -249,11 +247,11 @@ namespace NLangDetect.ConsoleApp
               string correctLang = line.SubSequence(0, idx);
               string text = line.Substring(idx + 1);
 
-              Detector detector = DetectorFactory.create(getDouble("alpha", DEFAULT_ALPHA));
+              Detector detector = DetectorFactory.Create(GetDouble("alpha", DefaultAlpha));
 
-              detector.append(text);
+              detector.Append(text);
 
-              string lang = detector.detect();
+              string lang = detector.Detect();
 
               if (!result.ContainsKey(correctLang))
               {
@@ -262,14 +260,14 @@ namespace NLangDetect.ConsoleApp
 
               result[correctLang].Add(lang);
 
-              if (hasOpt("--debug"))
+              if (HasOpt("--debug"))
               {
                 Console.WriteLine(correctLang + "," + lang + "," + (text.Length > 100 ? text.SubSequence(0, 100) : text));
               }
             }
           }
         }
-        catch (LangDetectException e)
+        catch (NLangDetectException e)
         {
           // TODO IMM HI:
           throw;
@@ -289,7 +287,7 @@ namespace NLangDetect.ConsoleApp
 
           foreach (string detectedLang in list)
           {
-            ++count;
+            count++;
 
             if (resultCount.ContainsKey(detectedLang))
             {

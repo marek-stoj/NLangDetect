@@ -27,13 +27,13 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       var profile = new LangProfile("en");
 
-      profile.add("a");
+      profile.Add("a");
       Assert.AreEqual(1, profile.freq["a"]);
 
-      profile.add("a");
+      profile.Add("a");
       Assert.AreEqual(2, profile.freq["a"]);
 
-      profile.omitLessFreq();
+      profile.OmitLessFreq();
     }
 
     [Test]
@@ -41,7 +41,7 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       var profile = new LangProfile(); // Illegal (available for only JSONIC) but ignore  
 
-      profile.add("a"); // ignore
+      profile.Add("a"); // ignore
 
       Assert.IsFalse(profile.freq.ContainsKey("a")); // ignored
     }
@@ -51,9 +51,9 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       var profile = new LangProfile("en");
 
-      profile.add("a");
-      profile.add("");  // Illegal (string's length of parameter must be between 1 and 3) but ignore
-      profile.add("abcd");  // as well
+      profile.Add("a");
+      profile.Add("");  // Illegal (string's length of parameter must be between 1 and 3) but ignore
+      profile.Add("abcd");  // as well
 
       Assert.AreEqual(1, profile.freq["a"]);
       Assert.IsFalse(profile.freq.ContainsKey(""));     // ignored
@@ -65,20 +65,20 @@ namespace NLangDetect.Core.Tests.UtilsTests
       var profile = new LangProfile("en");
       string[] grams = "a b c \u3042 \u3044 \u3046 \u3048 \u304a \u304b \u304c \u304d \u304e \u304f".Split(' ');
 
-      for (int i = 0; i < 5; ++i)
+      for (int i = 0; i < 5; i++)
       {
         foreach (string g in grams)
         {
-          profile.add(g);
+          profile.Add(g);
         }
       }
 
-      profile.add("\u3050");
+      profile.Add("\u3050");
       Assert.AreEqual(5, profile.freq["a"]);
       Assert.AreEqual(5, profile.freq["\u3042"]);
       Assert.AreEqual(1, profile.freq["\u3050"]);
 
-      profile.omitLessFreq();
+      profile.OmitLessFreq();
       Assert.IsFalse(profile.freq.ContainsKey("a")); // omitted
       Assert.AreEqual(5, profile.freq["\u3042"]);
       Assert.IsFalse(profile.freq.ContainsKey("\u3050")); // omitted
@@ -89,7 +89,7 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       var profile = new LangProfile();
 
-      profile.omitLessFreq();  // ignore
+      profile.OmitLessFreq();  // ignore
     }
   }
 }

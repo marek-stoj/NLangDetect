@@ -7,25 +7,30 @@ namespace NLangDetect.Core
 {
   public class DetectorFactory
   {
-    public Dictionary<string, double[]> wordLangProbMap;
-    public List<string> langlist;
-    public int? seed;
+    public Dictionary<string, double[]> WordLangProbMap;
+    public List<string> Langlist;
 
-    private static readonly DetectorFactory instance_ = new DetectorFactory();
+    private static readonly DetectorFactory _instance = new DetectorFactory();
+
+    #region Constructor(s)
 
     private DetectorFactory()
     {
-      wordLangProbMap = new Dictionary<string, double[]>();
-      langlist = new List<string>();
+      WordLangProbMap = new Dictionary<string, double[]>();
+      Langlist = new List<string>();
     }
 
-    public static void loadProfile(string profileDirectory)
+    #endregion
+
+    #region Public methods
+
+    public static void LoadProfile(string profileDirectory)
     {
       string[] listFiles = Directory.GetFiles(profileDirectory);
 
       if (listFiles == null)
       {
-        throw new LangDetectException("Not found profile: " + profileDirectory, ErrorCode.NeedLoadProfileError);
+        throw new NLangDetectException("Not found profile: " + profileDirectory, ErrorCode.NeedLoadProfileError);
       }
 
       int langsize = listFiles.Length, index = 0;
@@ -43,71 +48,87 @@ namespace NLangDetect.Core
 
         using (var sr = new StreamReader(file))
         {
-          langProfile = (LangProfile)jsonSerializer.Deserialize(sr, typeof(LangProfile));
+          langProfile = (LangProfile)jsonSerializer.Deserialize(sr, typeof (LangProfile));
         }
 
-        addProfile(langProfile, index, langsize);
+        AddProfile(langProfile, index, langsize);
         index++;
       }
     }
 
-    internal static void addProfile(LangProfile profile, int index, int langsize)
+    public static Detector Create()
     {
-      string lang = profile.name;
-
-      if (instance_.langlist.Contains(lang))
-      {
-        throw new LangDetectException("duplicate the same language profile", ErrorCode.DuplicateLangError);
-      }
-
-      instance_.langlist.Add(lang);
-
-      foreach (string word in profile.freq.Keys)
-      {
-        if (!instance_.wordLangProbMap.ContainsKey(word))
-        {
-          instance_.wordLangProbMap.Add(word, new double[langsize]);
-        }
-
-        double prob = (double)profile.freq[word] / profile.n_words[word.Length - 1];
-
-        instance_.wordLangProbMap[word][index] = prob;
-      }
+      return CreateDetector();
     }
 
-    internal static void clear()
+    public static Detector Create(double alpha)
     {
-      instance_.langlist.Clear();
-      instance_.wordLangProbMap.Clear();
-    }
+      Detector detector = CreateDetector();
 
-    public static Detector create()
-    {
-      return createDetector();
-    }
-
-    public static Detector create(double alpha)
-    {
-      Detector detector = createDetector();
-
-      detector.setAlpha(alpha);
+      detector.SetAlpha(alpha);
 
       return detector;
     }
 
-    private static Detector createDetector()
+    public static void SetSeed(int? seed)
     {
-      if (instance_.langlist.Count == 0)
+      _instance.Seed = seed;
+    }
+
+    #endregion
+
+    #region Internal methods
+
+    internal static void AddProfile(LangProfile profile, int index, int langsize)
+    {
+      string lang = profile.name;
+
+      if (_instance.Langlist.Contains(lang))
       {
-        throw new LangDetectException("need to load profiles", ErrorCode.NeedLoadProfileError);
+        throw new NLangDetectException("duplicate the same language profile", ErrorCode.DuplicateLangError);
       }
 
-      return new Detector(instance_);
+      _instance.Langlist.Add(lang);
+
+      foreach (string word in profile.freq.Keys)
+      {
+        if (!_instance.WordLangProbMap.ContainsKey(word))
+        {
+          _instance.WordLangProbMap.Add(word, new double[langsize]);
+        }
+
+        double prob = (double)profile.freq[word] / profile.n_words[word.Length - 1];
+
+        _instance.WordLangProbMap[word][index] = prob;
+      }
     }
 
-    public static void setSeed(int? seed)
+    internal static void Clear()
     {
-      instance_.seed = seed;
+      _instance.Langlist.Clear();
+      _instance.WordLangProbMap.Clear();
     }
+
+    #endregion
+
+    #region Private helper methods
+
+    private static Detector CreateDetector()
+    {
+      if (_instance.Langlist.Count == 0)
+      {
+        throw new NLangDetectException("need to load profiles", ErrorCode.NeedLoadProfileError);
+      }
+
+      return new Detector(_instance);
+    }
+
+    #endregion
+
+    #region Properties
+
+    public int? Seed { get; private set; }
+
+    #endregion
   }
 }

@@ -5,6 +5,8 @@ namespace NLangDetect.Core
   [Serializable]
   public class InternalException : Exception
   {
+    #region Constructor(s)
+
     public InternalException(string message, Exception innerException)
       : base(message, innerException)
     {
@@ -14,5 +16,7 @@ namespace NLangDetect.Core
       : this(message, null)
     {
     }
+
+    #endregion
   }
 }

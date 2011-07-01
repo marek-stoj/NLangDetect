@@ -11,13 +11,13 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       TagExtractor extractor1 = new TagExtractor(null, 0);
 
-      Assert.AreEqual(null, extractor1.target_);
-      Assert.AreEqual(0, extractor1.threshold_);
+      Assert.AreEqual(null, extractor1.Target);
+      Assert.AreEqual(0, extractor1.Threshold);
 
       TagExtractor extractor2 = new TagExtractor("abstract", 10);
 
-      Assert.AreEqual("abstract", extractor2.target_);
-      Assert.AreEqual(10, extractor2.threshold_);
+      Assert.AreEqual("abstract", extractor2.Target);
+      Assert.AreEqual(10, extractor2.Threshold);
     }
 
     [Test]
@@ -25,13 +25,13 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       TagExtractor extractor = new TagExtractor(null, 0);
 
-      extractor.setTag("");
+      extractor.SetTag("");
 
-      Assert.AreEqual("", extractor.tag_);
+      Assert.AreEqual("", extractor.Tag);
 
-      extractor.setTag(null);
+      extractor.SetTag(null);
 
-      Assert.AreEqual(null, extractor.tag_);
+      Assert.AreEqual(null, extractor.Tag);
     }
 
     [Test]
@@ -39,8 +39,8 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       TagExtractor extractor = new TagExtractor(null, 0);
 
-      extractor.add("");
-      extractor.add(null);    // ignore
+      extractor.Add("");
+      extractor.Add(null);    // ignore
     }
 
     [Test]
@@ -49,7 +49,7 @@ namespace NLangDetect.Core.Tests.UtilsTests
       TagExtractor extractor = new TagExtractor(null, 0);
       LangProfile profile = null;
 
-      extractor.closeTag(profile);    // ignore
+      extractor.CloseTag(profile);    // ignore
     }
 
     [Test]
@@ -57,31 +57,31 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       TagExtractor extractor = new TagExtractor("abstract", 10);
 
-      Assert.AreEqual(0, extractor.count());
+      Assert.AreEqual(0, extractor.Count);
 
       LangProfile profile = new LangProfile("en");
 
       // normal
-      extractor.setTag("abstract");
-      extractor.add("This is a sample text.");
-      extractor.closeTag(profile);
+      extractor.SetTag("abstract");
+      extractor.Add("This is a sample text.");
+      extractor.CloseTag(profile);
 
-      Assert.AreEqual(1, extractor.count());
+      Assert.AreEqual(1, extractor.Count);
       Assert.AreEqual(17, profile.n_words[0]);  // Thisisasampletext
       Assert.AreEqual(22, profile.n_words[1]);  // _T, Th, hi, ...
       Assert.AreEqual(17, profile.n_words[2]);  // _Th, Thi, his, ...
 
       // too short
-      extractor.setTag("abstract");
-      extractor.add("sample");
-      extractor.closeTag(profile);
-      Assert.AreEqual(1, extractor.count());
+      extractor.SetTag("abstract");
+      extractor.Add("sample");
+      extractor.CloseTag(profile);
+      Assert.AreEqual(1, extractor.Count);
 
       // other tags
-      extractor.setTag("div");
-      extractor.add("This is a sample text which is enough long.");
-      extractor.closeTag(profile);
-      Assert.AreEqual(1, extractor.count());
+      extractor.SetTag("div");
+      extractor.Add("This is a sample text which is enough long.");
+      extractor.CloseTag(profile);
+      Assert.AreEqual(1, extractor.Count);
     }
 
     [Test]
@@ -89,14 +89,14 @@ namespace NLangDetect.Core.Tests.UtilsTests
     {
       TagExtractor extractor = new TagExtractor("abstract", 10);
 
-      extractor.setTag("abstract");
-      extractor.add("This is a sample text.");
-      Assert.AreEqual("This is a sample text.", extractor.buf_.ToString());
-      Assert.AreEqual("abstract", extractor.tag_);
+      extractor.SetTag("abstract");
+      extractor.Add("This is a sample text.");
+      Assert.AreEqual("This is a sample text.", extractor.StringBuilder.ToString());
+      Assert.AreEqual("abstract", extractor.Tag);
 
-      extractor.clear();
-      Assert.AreEqual("", extractor.buf_.ToString());
-      Assert.AreEqual(null, extractor.tag_);
+      extractor.Clear();
+      Assert.AreEqual("", extractor.StringBuilder.ToString());
+      Assert.AreEqual(null, extractor.Tag);
     }
   }
 }

@@ -4,10 +4,12 @@ namespace NLangDetect.Core.Extensions
 {
   public static class RandomExtensions
   {
+    private const double _Epsilon = 2.22044604925031E-15;
+
     private static readonly object _mutex = new object();
 
-    private static double nextNextGaussian;
-    private static bool haveNextNextGaussian;
+    private static double _nextNextGaussian;
+    private static bool _hasNextNextGaussian;
 
     /// <summary>
     /// Returns the next pseudorandom, Gaussian ("normally") distributed double value with mean 0.0 and standard deviation 1.0 from this random number generator's sequence.
@@ -20,11 +22,11 @@ namespace NLangDetect.Core.Extensions
     {
       lock (_mutex)
       {
-        if (haveNextNextGaussian)
+        if (_hasNextNextGaussian)
         {
-          haveNextNextGaussian = false;
+          _hasNextNextGaussian = false;
 
-          return nextNextGaussian;
+          return _nextNextGaussian;
         }
 
         double v1, v2, s;
@@ -35,12 +37,12 @@ namespace NLangDetect.Core.Extensions
           v2 = 2.0 * random.NextDouble() - 1.0; // between -1.0 and 1.0
           s = v1 * v1 + v2 * v2;
         }
-        while (s >= 1.0 || s == 0.0);
+        while (s >= 1.0 || Math.Abs(s - 0.0) < _Epsilon);
 
         double multiplier = Math.Sqrt(-2.0 * Math.Log(s) / s);
 
-        nextNextGaussian = v2 * multiplier;
-        haveNextNextGaussian = true;
+        _nextNextGaussian = v2 * multiplier;
+        _hasNextNextGaussian = true;
 
         return v1 * multiplier;
       }

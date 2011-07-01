@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NLangDetect.Core.Extensions;
@@ -10,136 +11,143 @@ namespace NLangDetect.Core
 {
   public class Detector
   {
-    private const double ALPHA_DEFAULT = 0.5;
-    private const double ALPHA_WIDTH = 0.05;
+    private const double _AlphaDefault = 0.5;
+    private const double _AlphaWidth = 0.05;
 
-    private const int ITERATION_LIMIT = 1000;
-    private const double PROB_THRESHOLD = 0.1;
-    private const double CONV_THRESHOLD = 0.99999;
-    private const int BASE_FREQ = 10000;
-    private const string UNKNOWN_LANG = "unknown";
+    private const int _IterationLimit = 1000;
+    private const double _ProbThreshold = 0.1;
+    private const double _ConvThreshold = 0.99999;
+    private const int _BaseFreq = 10000;
+    private const string _UnknownLang = "unknown";
 
-    private static readonly Regex URL_REGEX = new Regex("https?://[-_.?&~;+=/#0-9A-Za-z]+", RegexOptions.Compiled);
-    private static readonly Regex MAIL_REGEX = new Regex("[-_.0-9A-Za-z]+@[-_0-9A-Za-z]+[-_.0-9A-Za-z]+", RegexOptions.Compiled);
+    private static readonly Regex _UrlRegex = new Regex("https?://[-_.?&~;+=/#0-9A-Za-z]+", RegexOptions.Compiled);
+    private static readonly Regex _MailRegex = new Regex("[-_.0-9A-Za-z]+@[-_0-9A-Za-z]+[-_.0-9A-Za-z]+", RegexOptions.Compiled);
 
-    private readonly Dictionary<string, double[]> wordLangProbMap;
-    private readonly List<string> langlist;
+    private readonly Dictionary<string, double[]> _wordLangProbMap;
+    private readonly List<string> _langlist;
 
-    private StringBuilder text;
-    private double[] langprob;
+    private StringBuilder _text;
+    private double[] _langprob;
 
-    private double alpha = ALPHA_DEFAULT;
-    private const int n_trial = 7;
-    private int max_text_length = 10000;
-    private double[] priorMap;
-    private bool verbose;
-    private int? seed;
+    private double _alpha = _AlphaDefault;
+    private const int _trialsCount = 7;
+    private int _maxTextLength = 10000;
+    private double[] _priorMap;
+    private bool _verbose;
+    private int? _seed;
+
+    #region Constructor(s)
 
     public Detector(DetectorFactory factory)
     {
-      wordLangProbMap = factory.wordLangProbMap;
-      langlist = factory.langlist;
-      text = new StringBuilder();
-      this.seed = factory.seed;
+      _wordLangProbMap = factory.WordLangProbMap;
+      _langlist = factory.Langlist;
+      _text = new StringBuilder();
+      _seed = factory.Seed;
     }
 
-    public void setVerbose()
+    #endregion
+
+    #region Public methods
+
+    public void SetVerbose()
     {
-      this.verbose = true;
+      _verbose = true;
     }
 
-    public void setAlpha(double alpha)
+    public void SetAlpha(double alpha)
     {
-      this.alpha = alpha;
+      _alpha = alpha;
     }
 
-    public void setPriorMap(Dictionary<string, double> priorMap)
+    public void SetPriorMap(Dictionary<string, double> priorMap)
     {
-      this.priorMap = new double[langlist.Count];
+      _priorMap = new double[_langlist.Count];
+
       double sump = 0;
-      for (int i = 0; i < this.priorMap.Length; ++i)
+
+      for (int i = 0; i < _priorMap.Length; i++)
       {
-        string lang = langlist[i];
+        string lang = _langlist[i];
+
         if (priorMap.ContainsKey(lang))
         {
           double p = priorMap[lang];
 
           if (p < 0)
           {
-            throw new LangDetectException("Prior probability must be non-negative.", ErrorCode.InitParamError);
+            throw new NLangDetectException("Prior probability must be non-negative.", ErrorCode.InitParamError);
           }
 
-          this.priorMap[i] = p;
-
+          _priorMap[i] = p;
           sump += p;
         }
       }
 
       if (sump <= 0)
       {
-        throw new LangDetectException("More one of prior probability must be non-zero.", ErrorCode.InitParamError);
+        throw new NLangDetectException("More one of prior probability must be non-zero.", ErrorCode.InitParamError);
       }
 
-      for (int i = 0; i < this.priorMap.Length; ++i)
+      for (int i = 0; i < _priorMap.Length; i++)
       {
-        this.priorMap[i] /= sump;
+        _priorMap[i] /= sump;
       }
     }
 
-    public void setMaxTextLength(int max_text_length)
+    public void SetMaxTextLength(int max_text_length)
     {
-      this.max_text_length = max_text_length;
+      _maxTextLength = max_text_length;
     }
-
 
     // TODO IMM HI: TextReader?
-    public void append(StreamReader streamReader)
+    public void Append(StreamReader streamReader)
     {
-      var buf = new char[max_text_length / 2];
+      var buf = new char[_maxTextLength / 2];
 
-      while (text.Length < max_text_length && !streamReader.EndOfStream)
+      while (_text.Length < _maxTextLength && !streamReader.EndOfStream)
       {
         int length = streamReader.Read(buf, 0, buf.Length);
 
-        append(new string(buf, 0, length));
+        Append(new string(buf, 0, length));
       }
     }
 
-    public void append(string text)
+    public void Append(string text)
     {
-      text = URL_REGEX.Replace(text, " ");
-      text = MAIL_REGEX.Replace(text, " ");
+      text = _UrlRegex.Replace(text, " ");
+      text = _MailRegex.Replace(text, " ");
 
       char pre = '\0';
 
-      for (int i = 0; i < text.Length && i < max_text_length; ++i)
+      for (int i = 0; i < text.Length && i < _maxTextLength; i++)
       {
-        char c = NGram.normalize(text[i]);
+        char c = NGram.Normalize(text[i]);
 
         if (c != ' ' || pre != ' ')
         {
-          this.text.Append(c);
+          _text.Append(c);
         }
 
         pre = c;
       }
     }
 
-    private void cleaningText()
+    private void CleanText()
     {
       int latinCount = 0, nonLatinCount = 0;
 
-      for (int i = 0; i < text.Length; ++i)
+      for (int i = 0; i < _text.Length; i++)
       {
-        char c = text[i];
+        char c = _text[i];
 
         if (c <= 'z' && c >= 'A')
         {
-          ++latinCount;
+          latinCount++;
         }
-        else if (c >= '\u0300' && c.GetUnicodeBlock() != UnicodeBlock.LATIN_EXTENDED_ADDITIONAL)
+        else if (c >= '\u0300' && c.GetUnicodeBlock() != UnicodeBlock.LatinExtendedAdditional)
         {
-          ++nonLatinCount;
+          nonLatinCount++;
         }
       }
 
@@ -147,9 +155,9 @@ namespace NLangDetect.Core
       {
         var textWithoutLatin = new StringBuilder();
 
-        for (int i = 0; i < text.Length; ++i)
+        for (int i = 0; i < _text.Length; i++)
         {
-          char c = text[i];
+          char c = _text[i];
 
           if (c > 'z' || c < 'A')
           {
@@ -157,239 +165,71 @@ namespace NLangDetect.Core
           }
         }
 
-        text = textWithoutLatin;
+        _text = textWithoutLatin;
       }
     }
 
-    public string detect()
+    public string Detect()
     {
-      List<Language> probabilities = getProbabilities();
+      List<Language> probabilities = GetProbabilities();
 
       if (probabilities.Count > 0)
       {
         return probabilities[0].Name;
       }
 
-      return UNKNOWN_LANG;
+      return _UnknownLang;
     }
 
-    public List<Language> getProbabilities()
+    public List<Language> GetProbabilities()
     {
-      if (langprob == null)
+      if (_langprob == null)
       {
-        detectBlock();
+        DetectBlock();
       }
 
-      List<Language> list = sortProbability(langprob);
+      List<Language> list = SortProbability(_langprob);
 
       return list;
     }
 
-    private void detectBlock()
-    {
-      cleaningText();
+    #endregion
 
-      List<string> ngrams = extractNGrams();
+    #region Private helper methods
 
-      if (ngrams.Count == 0)
-      {
-        throw new LangDetectException("no features in text", ErrorCode.CantDetectError);
-      }
-
-      langprob = new double[langlist.Count];
-
-      Random rand = (seed.HasValue ? new Random(seed.Value) : new Random());
-
-      for (int t = 0; t < n_trial; ++t)
-      {
-        double[] prob = initProbability();
-
-        // TODO IMM HI: verify it works
-        double alpha = this.alpha + rand.NextGaussian() * ALPHA_WIDTH;
-
-        for (int i = 0; ; ++i)
-        {
-          int r = rand.Next(ngrams.Count);
-
-          updateLangProb(prob, ngrams[r], alpha);
-
-          if (i % 5 == 0)
-          {
-            if (normalizeProb(prob) > CONV_THRESHOLD || i >= ITERATION_LIMIT)
-            {
-              break;
-            }
-
-            if (verbose)
-            {
-              Console.WriteLine("> " + sortProbability(prob));
-            }
-          }
-        }
-
-        for (int j = 0; j < langprob.Length; ++j)
-        {
-          langprob[j] += prob[j] / n_trial;
-        }
-
-        if (verbose)
-        {
-          Console.WriteLine("==> " + sortProbability(prob));
-        }
-      }
-    }
-
-    private double[] initProbability()
-    {
-      var prob = new double[langlist.Count];
-
-      if (priorMap != null)
-      {
-        for (int i = 0; i < prob.Length; ++i)
-        {
-          prob[i] = priorMap[i];
-        }
-      }
-      else
-      {
-        for (int i = 0; i < prob.Length; ++i)
-        {
-          prob[i] = 1.0 / langlist.Count;
-        }
-      }
-      return prob;
-    }
-
-    private List<string> extractNGrams()
-    {
-      var list = new List<string>();
-      NGram ngram = new NGram();
-
-      for (int i = 0; i < text.Length; ++i)
-      {
-        ngram.addChar(text[i]);
-
-        for (int n = 1; n <= NGram.N_GRAM; ++n)
-        {
-          string w = ngram.get(n);
-
-          if (w != null && wordLangProbMap.ContainsKey(w))
-          {
-            list.Add(w);
-          }
-        }
-      }
-
-      return list;
-    }
-
-    private bool updateLangProb(double[] prob, string word, double alpha)
-    {
-      if (word == null || !wordLangProbMap.ContainsKey(word))
-      {
-        return false;
-      }
-
-      double[] langProbMap = wordLangProbMap[word];
-
-      if (verbose)
-      {
-        Console.WriteLine(word + "(" + unicodeEncode(word) + "):" + wordProbToString(langProbMap));
-      }
-
-      double weight = alpha / BASE_FREQ;
-
-      for (int i = 0; i < prob.Length; ++i)
-      {
-        prob[i] *= weight + langProbMap[i];
-      }
-
-      return true;
-    }
-
-    private string wordProbToString(double[] prob)
-    {
-      var resultSb = new StringBuilder();
-
-      for (int j = 0; j < prob.Length; ++j)
-      {
-        double p = prob[j];
-
-        if (p >= 0.00001)
-        {
-          // TODO IMM HI: map the formatting
-          //formatter.format(" %s:%.5f", langlist[j], p);
-          resultSb.AppendFormat(" {0}:{1:F2}", langlist[j], p);
-          // TODO IMM HI: should we add newline?
-        }
-      }
-
-      return resultSb.ToString();
-    }
-
-    private static double normalizeProb(double[] prob)
+    private static double NormalizeProb(double[] probs)
     {
       double maxp = 0, sump = 0;
 
-      for (int i = 0; i < prob.Length; ++i)
-      {
-        sump += prob[i];
-      }
+      sump += probs.Sum();
 
-      for (int i = 0; i < prob.Length; ++i)
+      for (int i = 0; i < probs.Length; i++)
       {
-        double p = prob[i] / sump;
+        double p = probs[i] / sump;
 
         if (maxp < p)
         {
           maxp = p;
         }
 
-        prob[i] = p;
+        probs[i] = p;
       }
 
       return maxp;
     }
 
-    private List<Language> sortProbability(double[] prob)
-    {
-      var list = new List<Language>();
-
-      for (int j = 0; j < prob.Length; ++j)
-      {
-        double p = prob[j];
-
-        if (p > PROB_THRESHOLD)
-        {
-          for (int i = 0; i <= list.Count; ++i)
-          {
-            if (i == list.Count || list[i].Probability < p)
-            {
-              list.Insert(i, new Language(langlist[j], p));
-
-              break;
-            }
-          }
-        }
-      }
-
-      return list;
-    }
-
-    private static string unicodeEncode(string word)
+    private static string UnicodeEncode(string word)
     {
       var resultSb = new StringBuilder();
 
-      for (int i = 0; i < word.Length; ++i)
+      foreach (char ch in word)
       {
-        char ch = word[i];
-
         if (ch >= '\u0080')
         {
           // TODO IMM HI: how to do it in C#?
           //string st = Integer.toHexString(0x10000 + (int)ch);
           string st = string.Format("{0:x}", 0x10000 + ch);
-          
+
           while (st.Length < 4)
           {
             st = "0" + st;
@@ -407,5 +247,172 @@ namespace NLangDetect.Core
 
       return resultSb.ToString();
     }
+
+    private void DetectBlock()
+    {
+      CleanText();
+
+      List<string> ngrams = ExtractNGrams();
+
+      if (ngrams.Count == 0)
+      {
+        throw new NLangDetectException("no features in text", ErrorCode.CantDetectError);
+      }
+
+      _langprob = new double[_langlist.Count];
+
+      Random rand = (_seed.HasValue ? new Random(_seed.Value) : new Random());
+
+      for (int t = 0; t < _trialsCount; t++)
+      {
+        double[] prob = InitProbability();
+
+        // TODO IMM HI: verify it works
+        double alpha = _alpha + rand.NextGaussian() * _AlphaWidth;
+
+        for (int i = 0;; i++)
+        {
+          int r = rand.Next(ngrams.Count);
+
+          UpdateLangProb(prob, ngrams[r], alpha);
+
+          if (i % 5 == 0)
+          {
+            if (NormalizeProb(prob) > _ConvThreshold || i >= _IterationLimit)
+            {
+              break;
+            }
+
+            if (_verbose)
+            {
+              Console.WriteLine("> " + SortProbability(prob));
+            }
+          }
+        }
+
+        for (int j = 0; j < _langprob.Length; j++)
+        {
+          _langprob[j] += prob[j] / _trialsCount;
+        }
+
+        if (_verbose)
+        {
+          Console.WriteLine("==> " + SortProbability(prob));
+        }
+      }
+    }
+
+    private double[] InitProbability()
+    {
+      var prob = new double[_langlist.Count];
+
+      if (_priorMap != null)
+      {
+        for (int i = 0; i < prob.Length; i++)
+        {
+          prob[i] = _priorMap[i];
+        }
+      }
+      else
+      {
+        for (int i = 0; i < prob.Length; i++)
+        {
+          prob[i] = 1.0 / _langlist.Count;
+        }
+      }
+      return prob;
+    }
+
+    private List<string> ExtractNGrams()
+    {
+      var list = new List<string>();
+      NGram ngram = new NGram();
+
+      for (int i = 0; i < _text.Length; i++)
+      {
+        ngram.AddChar(_text[i]);
+
+        for (int n = 1; n <= NGram.GramsCount; n++)
+        {
+          string w = ngram.Get(n);
+
+          if (w != null && _wordLangProbMap.ContainsKey(w))
+          {
+            list.Add(w);
+          }
+        }
+      }
+
+      return list;
+    }
+
+    private void UpdateLangProb(double[] prob, string word, double alpha)
+    {
+      if (word == null || !_wordLangProbMap.ContainsKey(word))
+      {
+        return;
+      }
+
+      double[] langProbMap = _wordLangProbMap[word];
+
+      if (_verbose)
+      {
+        Console.WriteLine(word + "(" + UnicodeEncode(word) + "):" + WordProbToString(langProbMap));
+      }
+
+      double weight = alpha / _BaseFreq;
+
+      for (int i = 0; i < prob.Length; i++)
+      {
+        prob[i] *= weight + langProbMap[i];
+      }
+    }
+
+    private string WordProbToString(double[] prob)
+    {
+      var resultSb = new StringBuilder();
+
+      for (int j = 0; j < prob.Length; j++)
+      {
+        double p = prob[j];
+
+        if (p >= 0.00001)
+        {
+          // TODO IMM HI: map the formatting
+          //formatter.format(" %s:%.5f", langlist[j], p);
+          resultSb.AppendFormat(" {0}:{1:F2}", _langlist[j], p);
+          // TODO IMM HI: should we add newline?
+        }
+      }
+
+      return resultSb.ToString();
+    }
+
+    private List<Language> SortProbability(double[] prob)
+    {
+      var list = new List<Language>();
+
+      for (int j = 0; j < prob.Length; j++)
+      {
+        double p = prob[j];
+
+        if (p > _ProbThreshold)
+        {
+          for (int i = 0; i <= list.Count; i++)
+          {
+            if (i == list.Count || list[i].Probability < p)
+            {
+              list.Insert(i, new Language(_langlist[j], p));
+
+              break;
+            }
+          }
+        }
+      }
+
+      return list;
+    }
+
+    #endregion
   }
 }
