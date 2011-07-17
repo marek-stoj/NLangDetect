@@ -50,7 +50,7 @@ namespace NLangDetect.Core.Tests
 
       detect.Append("a");
 
-      Assert.AreEqual("en", detect.Detect());
+      Assert.AreEqual(LanguageName.En, detect.Detect());
     }
 
     [Test]
@@ -60,7 +60,7 @@ namespace NLangDetect.Core.Tests
 
       detect.Append("b d");
 
-      Assert.AreEqual("fr", detect.Detect());
+      Assert.AreEqual(LanguageName.Fr, detect.Detect());
     }
 
     [Test]
@@ -70,7 +70,7 @@ namespace NLangDetect.Core.Tests
 
       detect.Append("d e");
 
-      Assert.AreEqual("en", detect.Detect());
+      Assert.AreEqual(LanguageName.En, detect.Detect());
     }
 
     [Test]
@@ -80,7 +80,7 @@ namespace NLangDetect.Core.Tests
 
       detect.Append("\u3042\u3042\u3042\u3042a");
 
-      Assert.AreEqual("ja", detect.Detect());
+      Assert.AreEqual(LanguageName.Ja, detect.Detect());
     }
   }
 }
