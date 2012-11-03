@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Newtonsoft.Json;
 using NLangDetect.Core.Utils;
 
@@ -35,24 +36,28 @@ namespace NLangDetect.Core
       }
 
       int langsize = listFiles.Length, index = 0;
+      var jsonSerializer = new JsonSerializer();
 
       foreach (string file in listFiles)
       {
-        if (Path.GetFileName(file).StartsWith("."))
+        string fileName = Path.GetFileName(file);
+
+        if (!string.IsNullOrEmpty(fileName) && fileName.StartsWith("."))
         {
           continue;
         }
 
-        // TODO IMM HI: field?
-        var jsonSerializer = new JsonSerializer();
         LangProfile langProfile;
 
-        using (var sr = new StreamReader(file))
+        using (var s = File.OpenRead(file))
+        using (var gs = new GZipStream(s, CompressionMode.Decompress))
+        using (var sr = new StreamReader(gs))
         {
           langProfile = (LangProfile)jsonSerializer.Deserialize(sr, typeof(LangProfile));
         }
 
         AddProfile(langProfile, index, langsize);
+
         index++;
       }
     }
