@@ -75,152 +75,202 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <None Include="Profiles\af">
+    <None Include="..\..\LangProfiles\af">
+      <Link>LangProfiles\af</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ar">
+    <None Include="..\..\LangProfiles\ar">
+      <Link>LangProfiles\ar</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\bg">
+    <None Include="..\..\LangProfiles\bg">
+      <Link>LangProfiles\bg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\bn">
+    <None Include="..\..\LangProfiles\bn">
+      <Link>LangProfiles\bn</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\cs">
+    <None Include="..\..\LangProfiles\cs">
+      <Link>LangProfiles\cs</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\da">
+    <None Include="..\..\LangProfiles\da">
+      <Link>LangProfiles\da</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\de">
+    <None Include="..\..\LangProfiles\de">
+      <Link>LangProfiles\de</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\el">
+    <None Include="..\..\LangProfiles\el">
+      <Link>LangProfiles\el</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\en">
+    <None Include="..\..\LangProfiles\en">
+      <Link>LangProfiles\en</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\es">
+    <None Include="..\..\LangProfiles\es">
+      <Link>LangProfiles\es</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\fa">
+    <None Include="..\..\LangProfiles\fa">
+      <Link>LangProfiles\fa</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\fi">
+    <None Include="..\..\LangProfiles\fi">
+      <Link>LangProfiles\fi</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\fr">
+    <None Include="..\..\LangProfiles\fr">
+      <Link>LangProfiles\fr</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\gu">
+    <None Include="..\..\LangProfiles\gu">
+      <Link>LangProfiles\gu</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\he">
+    <None Include="..\..\LangProfiles\he">
+      <Link>LangProfiles\he</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\hi">
+    <None Include="..\..\LangProfiles\hi">
+      <Link>LangProfiles\hi</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\hr">
+    <None Include="..\..\LangProfiles\hr">
+      <Link>LangProfiles\hr</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\hu">
+    <None Include="..\..\LangProfiles\hu">
+      <Link>LangProfiles\hu</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\id">
+    <None Include="..\..\LangProfiles\id">
+      <Link>LangProfiles\id</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\it">
+    <None Include="..\..\LangProfiles\it">
+      <Link>LangProfiles\it</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ja">
+    <None Include="..\..\LangProfiles\ja">
+      <Link>LangProfiles\ja</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\kn">
+    <None Include="..\..\LangProfiles\kn">
+      <Link>LangProfiles\kn</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ko">
+    <None Include="..\..\LangProfiles\ko">
+      <Link>LangProfiles\ko</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\mk">
+    <None Include="..\..\LangProfiles\mk">
+      <Link>LangProfiles\mk</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ml">
+    <None Include="..\..\LangProfiles\ml">
+      <Link>LangProfiles\ml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\mr">
+    <None Include="..\..\LangProfiles\mr">
+      <Link>LangProfiles\mr</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ne">
+    <None Include="..\..\LangProfiles\ne">
+      <Link>LangProfiles\ne</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\nl">
+    <None Include="..\..\LangProfiles\nl">
+      <Link>LangProfiles\nl</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\no">
+    <None Include="..\..\LangProfiles\no">
+      <Link>LangProfiles\no</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\pa">
+    <None Include="..\..\LangProfiles\pa">
+      <Link>LangProfiles\pa</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\pl">
+    <None Include="..\..\LangProfiles\pl">
+      <Link>LangProfiles\pl</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\pt">
+    <None Include="..\..\LangProfiles\pt">
+      <Link>LangProfiles\pt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ro">
+    <None Include="..\..\LangProfiles\ro">
+      <Link>LangProfiles\ro</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ru">
+    <None Include="..\..\LangProfiles\ru">
+      <Link>LangProfiles\ru</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\sk">
+    <None Include="..\..\LangProfiles\sk">
+      <Link>LangProfiles\sk</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\so">
+    <None Include="..\..\LangProfiles\so">
+      <Link>LangProfiles\so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\sq">
+    <None Include="..\..\LangProfiles\sq">
+      <Link>LangProfiles\sq</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\sv">
+    <None Include="..\..\LangProfiles\sv">
+      <Link>LangProfiles\sv</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\sw">
+    <None Include="..\..\LangProfiles\sw">
+      <Link>LangProfiles\sw</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ta">
+    <None Include="..\..\LangProfiles\ta">
+      <Link>LangProfiles\ta</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\te">
+    <None Include="..\..\LangProfiles\te">
+      <Link>LangProfiles\te</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\th">
+    <None Include="..\..\LangProfiles\th">
+      <Link>LangProfiles\th</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\tl">
+    <None Include="..\..\LangProfiles\tl">
+      <Link>LangProfiles\tl</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\tr">
+    <None Include="..\..\LangProfiles\tr">
+      <Link>LangProfiles\tr</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\uk">
+    <None Include="..\..\LangProfiles\uk">
+      <Link>LangProfiles\uk</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\ur">
+    <None Include="..\..\LangProfiles\ur">
+      <Link>LangProfiles\ur</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\vi">
+    <None Include="..\..\LangProfiles\vi">
+      <Link>LangProfiles\vi</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\zh-cn">
+    <None Include="..\..\LangProfiles\zh-cn">
+      <Link>LangProfiles\zh-cn</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Profiles\zh-tw">
+    <None Include="..\..\LangProfiles\zh-tw">
+      <Link>LangProfiles\zh-tw</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

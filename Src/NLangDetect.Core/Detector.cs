@@ -22,7 +22,7 @@ namespace NLangDetect.Core
     private static readonly Regex _UrlRegex = new Regex("https?://[-_.?&~;+=/#0-9A-Za-z]+", RegexOptions.Compiled);
     private static readonly Regex _MailRegex = new Regex("[-_.0-9A-Za-z]+@[-_0-9A-Za-z]+[-_.0-9A-Za-z]+", RegexOptions.Compiled);
 
-    private readonly Dictionary<string, double[]> _wordLangProbMap;
+    private readonly Dictionary<string, ProbVector> _wordLangProbMap;
     private readonly List<LanguageName> _langlist;
 
     private StringBuilder _text;
@@ -32,7 +32,6 @@ namespace NLangDetect.Core
     private const int _trialsCount = 7;
     private int _maxTextLength = 10000;
     private double[] _priorMap;
-    private bool _verbose;
     private int? _seed;
 
     #region Constructor(s)
@@ -48,11 +47,6 @@ namespace NLangDetect.Core
     #endregion
 
     #region Public methods
-
-    public void SetVerbose()
-    {
-      _verbose = true;
-    }
 
     public void SetAlpha(double alpha)
     {
@@ -223,8 +217,6 @@ namespace NLangDetect.Core
       {
         if (ch >= '\u0080')
         {
-          // TODO IMM HI: how to do it in C#?
-          //string st = Integer.toHexString(0x10000 + (int)ch);
           string st = string.Format("{0:x}", 0x10000 + ch);
 
           while (st.Length < 4)
@@ -279,22 +271,12 @@ namespace NLangDetect.Core
             {
               break;
             }
-
-            if (_verbose)
-            {
-              Console.WriteLine("> " + SortProbability(prob));
-            }
           }
         }
 
         for (int j = 0; j < _langprob.Length; j++)
         {
           _langprob[j] += prob[j] / _trialsCount;
-        }
-
-        if (_verbose)
-        {
-          Console.WriteLine("==> " + SortProbability(prob));
         }
       }
     }
@@ -350,39 +332,13 @@ namespace NLangDetect.Core
         return;
       }
 
-      double[] langProbMap = _wordLangProbMap[word];
-
-      if (_verbose)
-      {
-        Console.WriteLine(word + "(" + UnicodeEncode(word) + "):" + WordProbToString(langProbMap));
-      }
-
+      ProbVector langProbMap = _wordLangProbMap[word];
       double weight = alpha / _BaseFreq;
 
       for (int i = 0; i < prob.Length; i++)
       {
         prob[i] *= weight + langProbMap[i];
       }
-    }
-
-    private string WordProbToString(double[] prob)
-    {
-      var resultSb = new StringBuilder();
-
-      for (int j = 0; j < prob.Length; j++)
-      {
-        double p = prob[j];
-
-        if (p >= 0.00001)
-        {
-          // TODO IMM HI: map the formatting
-          //formatter.format(" %s:%.5f", langlist[j], p);
-          resultSb.AppendFormat(" {0}:{1:F2}", _langlist[j], p);
-          // TODO IMM HI: should we add newline?
-        }
-      }
-
-      return resultSb.ToString();
     }
 
     private List<Language> SortProbability(double[] prob)

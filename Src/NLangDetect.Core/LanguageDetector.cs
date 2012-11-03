@@ -16,7 +16,10 @@ namespace NLangDetect.Core
 
     public static void Initialize(string profilesDirectory)
     {
-      if (string.IsNullOrEmpty(profilesDirectory)) { throw new ArgumentException("Argument can't be null nor empty.", "profilesDirectory"); }
+      if (string.IsNullOrEmpty(profilesDirectory))
+      {
+        throw new ArgumentException("Argument can't be null nor empty.", "profilesDirectory");
+      }
 
       lock (_mutex)
       {
@@ -25,9 +28,15 @@ namespace NLangDetect.Core
           throw new InvalidOperationException("The component has already been initialized.");
         }
 
-        DetectorFactory.LoadProfile(profilesDirectory);
+        DetectorFactory.LoadProfiles(profilesDirectory);
+
         _isInitialized = true;
       }
+    }
+
+    public static void Release()
+    {
+      DetectorFactory.Clear();
     }
 
     public static LanguageName? DetectLanguage(string plainText)

@@ -8,7 +8,7 @@ namespace NLangDetect.Core
 {
   public class DetectorFactory
   {
-    public Dictionary<string, double[]> WordLangProbMap;
+    public Dictionary<string, ProbVector> WordLangProbMap;
     public List<LanguageName> Langlist;
 
     private static readonly DetectorFactory _instance = new DetectorFactory();
@@ -17,7 +17,7 @@ namespace NLangDetect.Core
 
     private DetectorFactory()
     {
-      WordLangProbMap = new Dictionary<string, double[]>();
+      WordLangProbMap = new Dictionary<string, ProbVector>();
       Langlist = new List<LanguageName>();
     }
 
@@ -25,7 +25,7 @@ namespace NLangDetect.Core
 
     #region Public methods
 
-    public static void LoadProfile(string profileDirectory)
+    public static void LoadProfiles(string profileDirectory)
     {
       string[] listFiles = Directory.GetFiles(profileDirectory);
 
@@ -95,7 +95,7 @@ namespace NLangDetect.Core
       {
         if (!_instance.WordLangProbMap.ContainsKey(word))
         {
-          _instance.WordLangProbMap.Add(word, new double[langsize]);
+          _instance.WordLangProbMap.Add(word, new ProbVector());
         }
 
         double prob = (double)profile.freq[word] / profile.n_words[word.Length - 1];

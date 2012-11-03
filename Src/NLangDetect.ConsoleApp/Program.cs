@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -26,7 +25,7 @@ namespace NLangDetect.ConsoleApp
     {
       var program = new Program();
 
-      program.AddOpt("-d", "directory", "./");
+      program.AddOpt("-d", "directory", ".\\");
       program.AddOpt("-a", "alpha", "" + DefaultAlpha);
       program.AddOpt("-s", "seed", null);
       program.Parse(args);
@@ -127,11 +126,11 @@ namespace NLangDetect.ConsoleApp
 
     private bool LoadProfile()
     {
-      string profileDirectory = Get("directory") + "/";
+      string profileDirectory = Get("directory") + "\\";
 
       try
       {
-        DetectorFactory.LoadProfile(profileDirectory);
+        DetectorFactory.LoadProfiles(profileDirectory);
 
         int? seed = GetInt("seed");
 
@@ -164,23 +163,15 @@ namespace NLangDetect.ConsoleApp
           continue;
         }
 
-        try
+        LangProfile profile = GenProfile.load(lang, file);
+
+        profile.OmitLessFreq();
+
+        string profile_path = directory + "\\LangProfiles\\" + lang;
+
+        using (var sw = new StreamWriter(profile_path))
         {
-          LangProfile profile = GenProfile.load(lang, file);
-
-          profile.OmitLessFreq();
-
-          string profile_path = directory + "/profiles/" + lang;
-
-          using (var sw = new StreamWriter(profile_path))
-          {
-            _jsonSerializer.Serialize(sw, profile);
-          }
-        }
-        catch (NLangDetectException e)
-        {
-          // TODO IMM HI: what about this?
-          throw;
+          _jsonSerializer.Serialize(sw, profile);
         }
       }
     }
@@ -194,34 +185,21 @@ namespace NLangDetect.ConsoleApp
 
       foreach (string filename in _argList)
       {
-        try
+        Detector detector = DetectorFactory.Create(GetDouble("alpha", DefaultAlpha));
+
+        using (var sr = new StreamReader(filename))
         {
-          Detector detector = DetectorFactory.Create(GetDouble("alpha", DefaultAlpha));
-
-          if (HasOpt("--debug"))
-          {
-            detector.SetVerbose();
-          }
-
-          using (var sr = new StreamReader(filename))
-          {
-            detector.Append(sr);
-          }
-
-          Console.Write(filename + ": ");
-
-          foreach (Language language in detector.GetProbabilities())
-          {
-            Console.Write(language);
-          }
-
-          Console.WriteLine();
+          detector.Append(sr);
         }
-        catch (NLangDetectException e)
+
+        Console.Write(filename + ": ");
+
+        foreach (Language language in detector.GetProbabilities())
         {
-          // TODO IMM HI: what about this?
-          throw;
+          Console.Write(language);
         }
+
+        Console.WriteLine();
       }
     }
 
@@ -236,42 +214,29 @@ namespace NLangDetect.ConsoleApp
 
       foreach (string filename in _argList)
       {
-        try
+        using (var sr = new StreamReader(filename))
         {
-          using (var sr = new StreamReader(filename))
+          while (!sr.EndOfStream)
           {
-            while (!sr.EndOfStream)
+            string line = sr.ReadLine();
+            int idx = line.IndexOf('\t');
+            if (idx <= 0) continue;
+            string correctLang = line.SubSequence(0, idx);
+            string text = line.Substring(idx + 1);
+
+            Detector detector = DetectorFactory.Create(GetDouble("alpha", DefaultAlpha));
+
+            detector.Append(text);
+
+            LanguageName? lang = detector.Detect();
+
+            if (!result.ContainsKey(correctLang))
             {
-              string line = sr.ReadLine();
-              int idx = line.IndexOf('\t');
-              if (idx <= 0) continue;
-              string correctLang = line.SubSequence(0, idx);
-              string text = line.Substring(idx + 1);
-
-              Detector detector = DetectorFactory.Create(GetDouble("alpha", DefaultAlpha));
-
-              detector.Append(text);
-
-              LanguageName? lang = detector.Detect();
-
-              if (!result.ContainsKey(correctLang))
-              {
-                result.Add(correctLang, new List<LanguageName?>());
-              }
-
-              result[correctLang].Add(lang);
-
-              if (HasOpt("--debug"))
-              {
-                Console.WriteLine(correctLang + "," + lang + "," + (text.Length > 100 ? text.SubSequence(0, 100) : text));
-              }
+              result.Add(correctLang, new List<LanguageName?>());
             }
+
+            result[correctLang].Add(lang);
           }
-        }
-        catch (NLangDetectException e)
-        {
-          // TODO IMM HI:
-          throw;
         }
 
         var langlist = new List<string>(result.Keys);

@@ -43,8 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DetectorTest.cs" />
+    <Compile Include="DetectorTests.cs" />
     <Compile Include="ExtensionsTests\LangProfileTest.cs" />
+    <Compile Include="LanguageDetectorTests.cs" />
     <Compile Include="LanguageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UtilsTests\LangProfileTest.cs" />
@@ -56,6 +57,205 @@
       <Project>{E2DE2882-720B-4881-A30E-16686F50FAA6}</Project>
       <Name>NLangDetect.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\..\LangProfiles\af">
+      <Link>LangProfiles\af</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ar">
+      <Link>LangProfiles\ar</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\bg">
+      <Link>LangProfiles\bg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\bn">
+      <Link>LangProfiles\bn</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\cs">
+      <Link>LangProfiles\cs</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\da">
+      <Link>LangProfiles\da</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\de">
+      <Link>LangProfiles\de</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\el">
+      <Link>LangProfiles\el</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\en">
+      <Link>LangProfiles\en</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\es">
+      <Link>LangProfiles\es</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\fa">
+      <Link>LangProfiles\fa</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\fi">
+      <Link>LangProfiles\fi</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\fr">
+      <Link>LangProfiles\fr</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\gu">
+      <Link>LangProfiles\gu</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\he">
+      <Link>LangProfiles\he</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\hi">
+      <Link>LangProfiles\hi</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\hr">
+      <Link>LangProfiles\hr</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\hu">
+      <Link>LangProfiles\hu</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\id">
+      <Link>LangProfiles\id</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\it">
+      <Link>LangProfiles\it</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ja">
+      <Link>LangProfiles\ja</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\kn">
+      <Link>LangProfiles\kn</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ko">
+      <Link>LangProfiles\ko</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\mk">
+      <Link>LangProfiles\mk</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ml">
+      <Link>LangProfiles\ml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\mr">
+      <Link>LangProfiles\mr</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ne">
+      <Link>LangProfiles\ne</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\nl">
+      <Link>LangProfiles\nl</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\no">
+      <Link>LangProfiles\no</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\pa">
+      <Link>LangProfiles\pa</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\pl">
+      <Link>LangProfiles\pl</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\pt">
+      <Link>LangProfiles\pt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ro">
+      <Link>LangProfiles\ro</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ru">
+      <Link>LangProfiles\ru</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\sk">
+      <Link>LangProfiles\sk</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\so">
+      <Link>LangProfiles\so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\sq">
+      <Link>LangProfiles\sq</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\sv">
+      <Link>LangProfiles\sv</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\sw">
+      <Link>LangProfiles\sw</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ta">
+      <Link>LangProfiles\ta</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\te">
+      <Link>LangProfiles\te</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\th">
+      <Link>LangProfiles\th</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\tl">
+      <Link>LangProfiles\tl</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\tr">
+      <Link>LangProfiles\tr</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\uk">
+      <Link>LangProfiles\uk</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\ur">
+      <Link>LangProfiles\ur</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\vi">
+      <Link>LangProfiles\vi</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\zh-cn">
+      <Link>LangProfiles\zh-cn</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\LangProfiles\zh-tw">
+      <Link>LangProfiles\zh-tw</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,17 +4,15 @@ using NUnit.Framework;
 namespace NLangDetect.Core.Tests
 {
   [TestFixture]
-  public class DetectorTest
+  public class DetectorTests
   {
     private const string Training_EN = "a a a b b c c d e";
     private const string Training_FR = "a b b c c c d d d";
     private const string Training_JA = "\u3042 \u3042 \u3042 \u3044 \u3046 \u3048 \u3048";
 
     [SetUp]
-    public void setUp()
+    public void SetUp()
     {
-      DetectorFactory.Clear();
-
       LangProfile profile_en = new LangProfile("en");
 
       foreach (string w in Training_EN.Split(' '))
@@ -43,8 +41,14 @@ namespace NLangDetect.Core.Tests
       DetectorFactory.AddProfile(profile_ja, 2, 3);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+      DetectorFactory.Clear();
+    }
+
     [Test]
-    public void testDetector1()
+    public void TestDetector1()
     {
       Detector detect = DetectorFactory.Create();
 
@@ -54,7 +58,7 @@ namespace NLangDetect.Core.Tests
     }
 
     [Test]
-    public void testDetector2()
+    public void TestDetector2()
     {
       Detector detect = DetectorFactory.Create();
 
@@ -64,7 +68,7 @@ namespace NLangDetect.Core.Tests
     }
 
     [Test]
-    public void testDetector3()
+    public void TestDetector3()
     {
       Detector detect = DetectorFactory.Create();
 
@@ -74,7 +78,7 @@ namespace NLangDetect.Core.Tests
     }
 
     [Test]
-    public void testDetector4()
+    public void TestDetector4()
     {
       Detector detect = DetectorFactory.Create();
 
