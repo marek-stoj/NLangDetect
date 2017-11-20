@@ -85,7 +85,7 @@ namespace NLangDetect.Core
 
     #region Internal methods
 
-    internal static void AddProfile(LangProfile profile, int index, int langsize)
+    public static void AddProfile(LangProfile profile, int index, int langsize)
     {
       var lang = (LanguageName)Enum.Parse(typeof(LanguageName), profile.name, true);
 
@@ -109,7 +109,7 @@ namespace NLangDetect.Core
       }
     }
 
-    internal static void Clear()
+    public static void Clear()
     {
       _instance.Langlist.Clear();
       _instance.WordLangProbMap.Clear();

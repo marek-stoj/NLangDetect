@@ -6,13 +6,13 @@ namespace NLangDetect.Core.Tests
   [TestFixture]
   public class LanguageDetectorTests
   {
-    [TestFixtureSetUp]
+    [OneTimeSetUp]
     public void TestFixtureSetUp()
     {
       LanguageDetector.Initialize("LangProfiles");
     }
 
-    [TestFixtureTearDown]
+    [OneTimeTearDown]
     public void TestFixtureTearDown()
     {
       LanguageDetector.Release();
