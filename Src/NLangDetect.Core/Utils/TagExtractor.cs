@@ -4,11 +4,10 @@ namespace NLangDetect.Core.Utils
 {
   public class TagExtractor
   {
-    // TODO IMM HI: do the really need to be internal?
-    internal string Target;
-    internal int Threshold;
-    internal StringBuilder StringBuilder;
-    internal string Tag;
+    public string Target;
+    public int Threshold;
+    public StringBuilder StringBuilder;
+    public string Tag;
 
     #region Constructor(s)
 
